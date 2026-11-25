@@ -63,6 +63,22 @@ nav button{font-size:11px;position:relative}nav button.on svg{transform:translat
 .ad{position:absolute;top:16px;inset-inline-start:16px;background:#061B29d9;border:1px solid var(--gold);color:var(--gold);font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px}
 .sponsor{position:relative;border-color:var(--gold);text-align:center;padding-top:26px}.sponsor .ad{top:10px}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+.cb{position:fixed;left:12px;right:12px;bottom:84px;max-width:536px;margin-inline:auto;background:#0C3445;border:1px solid var(--gold);border-radius:18px;padding:14px;z-index:60;font-size:14px;box-shadow:0 10px 30px #0008;animation:rise .4s both}
+.hh{background-size:cover;background-position:center;border-radius:18px;padding:16px;margin-bottom:12px;border:1px solid var(--line)}
+.mw{position:relative}.ov{position:absolute;background:#061B29d9;border:1px solid var(--line);border-radius:99px;padding:3px 12px;font-size:12px;color:var(--ink)}
+.ib{width:38px;height:38px;border-radius:50%;padding:0;font-size:20px;color:var(--ink);text-align:center;line-height:34px;cursor:pointer}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#8fb4bd;margin-inline-end:6px}
+.tile{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/3;background-size:cover;background-position:center;border:1px solid var(--line);display:flex;align-items:flex-end;padding:12px;cursor:pointer;transition:transform .18s cubic-bezier(.2,.8,.2,1)}
+.tile:active{transform:scale(.97)}.tile b{display:block;font-size:16px}.tile .mute{font-size:12px}
+.tile .soon{position:absolute;top:10px;inset-inline-start:10px;background:#061B29d9;border:1px solid var(--gold);color:var(--gold);font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px}
+.mp2{position:relative;height:360px;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#0a2d3d;touch-action:none;user-select:none;-webkit-user-select:none}
+.lay,.mk{position:absolute;inset:0}.mk{pointer-events:none}.tl{position:absolute;left:0;top:0;width:256px;height:256px;max-width:none;filter:invert(1) hue-rotate(180deg) brightness(.82) contrast(.92) saturate(.7)}
+.pin{pointer-events:auto;position:absolute;width:32px;height:32px;margin:-16px 0 0 -16px;border-radius:50%;border:2px solid #061B29;background:var(--cy);font-size:15px;line-height:1;padding:0;cursor:pointer;box-shadow:0 4px 12px #0007}
+.pin.on{background:var(--gold);width:40px;height:40px;margin:-20px 0 0 -20px;font-size:19px}
+.me{position:absolute;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:#4aa3ff;border:3px solid #fff;box-shadow:0 0 0 6px #4aa3ff44}
+.zc{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:8px}.zc .ib{background:#061B29e0;border:1px solid var(--line)}
+.att{position:absolute;bottom:4px;right:6px;font-size:10px;color:#cfe;background:#061B29aa;padding:0 6px;border-radius:6px}
+.lay2{position:absolute;inset:0;pointer-events:none}.ot{position:absolute;left:0;top:0;width:256px;height:256px;opacity:.7;pointer-events:none;background-repeat:no-repeat}
 </style></head><body>
 <header><div class="logo">بحر<small>BAHR</small></div><span style="display:flex;gap:8px"><button class="pill" id="inst" hidden>تثبيت</button><button class="pill" id="net"><i></i><span>متصل</span></button></span></header>
 <main id="v"><noscript>فعّل JavaScript لتشغيل التطبيق.</noscript></main><nav id="nav"></nav>
@@ -86,7 +102,7 @@ const NAV=[["الرئيسية","M3 11l9-8 9 8v10h-6v-6H9v6H3z"],["الخريطة
 $("#nav").innerHTML=NAV.map((n,i)=>`<button data-i="${i}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="${n[1]}"/></svg>${n[0]}</button>`).join("");
 $("#nav").onclick=e=>{const b=e.target.closest("button");if(b){tab=+b.dataset.i;sub=0;R.fresh=true;R()}};
 const setOff=o=>{off=o;document.body.classList.toggle("off",off);$("#net span").textContent=off?"أوفلاين":"متصل";R.keep=true;R()};
-$("#net").onclick=()=>setOff(!off);addEventListener("offline",()=>setOff(true));addEventListener("online",()=>setOff(false));
+$("#net").onclick=()=>setOff(!off);addEventListener("offline",()=>setOff(true));addEventListener("online",()=>{setOff(false);loadWx(true)});
 const pts=()=>log.reduce((a,c)=>a+Math.round(c.w*100)+50,0),mx=()=>log.reduce((a,c)=>Math.max(a,c.w),0);
 const tabs=(a,k)=>`<div class="chips">${a.map((t,i)=>`<button class="chip ${i==k?"on":""}" data-s="${i}">${t}</button>`).join("")}</div>`;
 const ring=v=>`<svg class="ring" viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" fill="none" stroke="#1d4a5c" stroke-width="3"/><circle cx="18" cy="18" r="15" fill="none" stroke="#24B9C7" stroke-width="3" stroke-dasharray="${v*.942} 100" transform="rotate(-90 18 18)" stroke-linecap="round"/><text x="18" y="21" text-anchor="middle" font-size="9" fill="#F5F8FA" font-weight="700">${v}%</text></svg>`;
@@ -108,12 +124,12 @@ const rise=720-4*(lon+ha)-eq,set=720-4*(lon-ha)-eq,noon=720-4*lon-eq;
 const jd=d.getTime()/864e5+2440587.5,age=(((jd-2451550.1)/29.530588853)%1+1)%1*29.530588853,ill=(1-Math.cos(2*PI*age/29.530588853))/2,tr=noon+age*50.47;
 return{rise:at(rise),set:at(set),age,ill,maj:[at(tr),at(tr+745)]}}
 
-function score(A){let sc=50,cf=30;const ev=[];let un=false;
-if(cond.w!=null){const w=cond.w;sc+=w<=10?15:w<=15?5:w<=20?-10:-30;cf+=25;ev.push("الرياح "+w+" عقدة");if(w>20)un=true}
-if(cond.h!=null){const h=cond.h;sc+=h<=.5?15:h<=1?8:h<=1.5?0:h<=2?-15:-35;cf+=25;ev.push("الموج "+h+" م");if(h>2)un=true}
+function score(A,l){const E=eff(l);let sc=50,cf=30;const ev=[];let un=false;
+if(E.w!=null){const w=E.w;sc+=w<=10?15:w<=15?5:w<=20?-10:-30;cf+=25;ev.push("الرياح "+w+" عقدة");if(w>20)un=true}
+if(E.h!=null){const h=E.h;sc+=h<=.5?15:h<=1?8:h<=1.5?0:h<=2?-15:-35;cf+=25;ev.push("الموج "+h+" م");if(h>2)un=true}
 if(A.ill<.1||A.ill>.9){sc+=8;ev.push("القمر قريب من المحاق أو البدر")}
 const n=Date.now();if([A.rise,A.set,...A.maj].some(t=>Math.abs(n-t)<36e5)){sc+=10;ev.push("الوقت ضمن فترة نشاط (فجر أو غروب أو قمرية)")}
-if(cond.w==null&&cond.h==null)ev.push("لم تُدخل ظروف البحر بعد");
+if(E.w==null&&E.h==null)ev.push("لا توجد بيانات طقس بعد");
 return{s:Math.max(5,Math.min(95,sc)),c:Math.min(80,cf),ev,un}}
 const dist=(a,t)=>{const r=PI/180,dl=(t.lo-a.lon)*r,p1=a.lat*r,p2=t.la*r,h=Math.sin((p2-p1)/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2;return{km:(2*6371*Math.asin(Math.sqrt(h))).toFixed(1),b:Math.round((Math.atan2(Math.sin(dl)*Math.cos(p2),Math.cos(p1)*Math.sin(p2)-Math.sin(p1)*Math.cos(p2)*Math.cos(dl))/r+360)%360)}};
 async function ask(){const o=$("#ao"),t=SP[sel],A=astro(new Date(),t.la,t.lo);let sm=null;try{sm=await window.claude.use("sample")}catch(e){}
@@ -122,26 +138,89 @@ const q="أنت مساعد صيد مصري محترف. أجب بالعربية �
 try{await sm(q,{modelTier:"quick",onText:({text})=>{o.textContent=text}})}catch(e){o.textContent=e&&e.code=="not_granted"?"تم رفض الإذن.":"تعذر الحصول على رد الآن."}}
 async function saveCatch(){const w=parseFloat($("#lw").value);if(!(w>0))return $("#lw").focus();let ph=null;const fl=$("#lph").files[0];
 if(fl){try{const b=await createImageBitmap(fl),k=Math.min(1,360/Math.max(b.width,b.height)),c=document.createElement("canvas");c.width=Math.round(b.width*k);c.height=Math.round(b.height*k);c.getContext("2d").drawImage(b,0,0,c.width,c.height);ph=c.toDataURL("image/jpeg",.6)}catch(e){}}
-log.push({f:$("#lf").value,p:$("#lp").value,w,r:$("#lr").checked,d:new Date().toLocaleDateString("ar-EG"),pos:pos?{lat:+pos.lat.toFixed(4),lon:+pos.lon.toFixed(4)}:null,c:{...cond},ph});if(!SV("bl2",log)){log[log.length-1].ph=null;SV("bl2",log)}R()}
+log.push({f:$("#lf").value,p:$("#lp").value,w,r:$("#lr").checked,d:new Date().toLocaleDateString("ar-EG"),pos:pos?{lat:+pos.lat.toFixed(4),lon:+pos.lon.toFixed(4)}:null,c:{...cond},ph});if(!SV("bl2",log)){log[log.length-1].ph=null;SV("bl2",log)}track("log_catch",{species:log[log.length-1].f,weight:w});R()}
 const rg=t=>f(new Date(t-36e5))+" – "+f(new Date(+t+36e5));
-function V0(){const L=pos||{lat:31.2,lon:29.9},A=astro(new Date(),L.lat,L.lon),sc=score(A);
+function V0(){const L=pos||{lat:31.2,lon:29.9},A=astro(new Date(),L.lat,L.lon),hl=WXC[wk(L.lat,L.lon)],sc=score(A,hl),kg=log.reduce((x,l)=>x+l.w,0).toFixed(1);
+const tl=(k,t,d,go)=>`<div class="tile" ${go?`data-go="${go}"`:'data-soon="1"'} style="background-image:linear-gradient(90deg,#061B29e6 10%,#061B2955),url(${IMG[k]})">${go?"":'<span class="soon">قريباً</span>'}<div><b>${t}</b><span class="mute">${d}</span></div></div>`;
+const days=[0,1,2].map(i=>{const d=new Date(Date.now()+i*864e5),B=astro(d,L.lat,L.lon);return `<div class="row"><span>${i?d.toLocaleDateString("ar-EG",{weekday:"long"}):"اليوم"}</span><span class="mute">${moon(B.age)}</span><b>${f(B.rise)}</b></div>`}).join("");
 return `${off?'<div class="card" style="border-color:var(--red)">أنت أوفلاين. الحسابات الفلكية تشتغل بدون نت.</div>':""}
-<h2 style="font-size:26px">أهلاً بك في بحر</h2><p class="mute" style="margin:0 0 10px">${pts()} نقطة · ${log.length} رحلة</p>
-<img class="hero" alt="ساحل الإسكندرية" src="${IMG.sat}"><button class="btn c" data-go="1" style="margin-bottom:12px">افتح الخريطة</button>
-<div class="card"${sc.un?' style="border-color:var(--red)"':""}><h3>ملاءمة ظروف الصيد الآن</h3>${sc.un?'<p style="color:var(--red);font-weight:700;margin:0 0 6px">الظروف غير آمنة. لا تخرج للصيد.</p>':""}
-<div class="flex"><div style="text-align:center">${ring(sc.s)}<div class="mute">الملاءمة</div></div><div style="text-align:center">${ring(sc.c)}<div class="mute">الثقة</div></div></div>
-<div class="mute" style="margin-top:6px">${sc.ev.join(" · ")}</div><p class="mute" style="margin:6px 0 0">ملاءمة الظروف لا تعني وجود سمك مؤكد.</p></div>
+<div class="hh" style="background-image:linear-gradient(#061B29b0,#061B29f5),url(${IMG.boat})"><img class="bd" style="width:48px;height:48px;float:left" alt="" src="${IMG.b0}"><h2 style="font-size:24px;line-height:1.3">أكثر من صيد…<br>ذكاء في أعماق البحر</h2><div class="chips" style="margin:10px 0 0"><span class="chip on">البحر المتوسط</span><button class="chip" data-soon="1">البحر الأحمر · قريباً</button><button class="chip" data-soon="1">الخليج · قريباً</button></div></div>
+<div class="card" style="padding:8px"><div class="mw"><img class="hero" style="margin:0" alt="ساحل الإسكندرية" src="${IMG.sat}"><span class="ov" style="top:10px;right:10px"><i class="dot"></i>بيانات الأقمار الصناعية · قريباً</span><button class="ib ov" style="top:10px;left:10px" data-geo="1" aria-label="حدد موقعي">⌖</button><span class="ov" style="bottom:10px;right:10px">المصدر: حسابات على جهازك</span></div><div class="flex" style="margin-top:8px"><button class="btn c" data-go="1">افتح الخريطة</button></div><div class="mute">${gmsg}</div></div>
+${seaCard(hl,sc)}
+<div class="g2">${tl("قاروص","موسوعة الأسماك","اكتشف الأنواع","2")}${tl("sat","حركة السفن AIS","تابع الملاحة")}${tl("سلطان إبراهيم","التنوع البحري","عالم المحيط")}${tl("سردين","السلسلة الغذائية","العلاقات البحرية")}</div>
+<div class="card"><h3>مساعد بحر الذكي</h3><div class="mute" style="margin-bottom:8px">اسأل: أين أفضل مناطق الصيد الآن؟</div><button class="btn" data-ai="1">ابدأ المحادثة</button></div>
+<div class="g2"><div class="card"><h3>رحلاتي ومصيداتي</h3><div class="big">${log.length}</div><div class="mute">رحلة · ${kg} كجم</div><button class="chip" style="margin-top:8px" data-go="5">عرض التفاصيل</button></div><div class="card"><h3>أفضل أيام الصيد</h3>${days}<div class="mute" style="font-size:12px">فلكياً: القمر وشروق الشمس</div></div></div>
 <div class="card"><h3>ظروف البحر الآن</h3><p class="mute" style="margin:0 0 8px">أدخل ما تقرأه من النشرة الرسمية أو تراه بنفسك. التطبيق لا يخترع أرقاماً.</p><div class="flex"><input id="cw" type="number" placeholder="الرياح (عقدة)" value="${cond.w??""}"><input id="ch" type="number" step="0.1" placeholder="الموج (م)" value="${cond.h??""}"></div><button class="btn" id="cs">احسب الملاءمة</button></div>
 <div class="card"><h3>الشمس والقمر</h3><div class="row"><span>الشروق</span><b>${f(A.rise)}</b></div><div class="row"><span>الغروب</span><b>${f(A.set)}</b></div><div class="row"><span>القمر</span><b>${moon(A.age)} · ${Math.round(A.ill*100)}%</b></div></div>
 <div class="card"><h3>أوقات النشاط المتوقعة</h3><div class="row"><span>الفجر</span><b>${rg(A.rise)}</b></div><div class="row"><span>الغروب</span><b>${rg(A.set)}</b></div><div class="row"><span>فترة قمرية</span><b>${rg(A.maj[0])}</b></div><div class="row"><span>فترة قمرية</span><b>${rg(A.maj[1])}</b></div><p class="demo" style="margin:6px 0 0">حسابات فلكية تقريبية على جهازك ${pos?"لموقعك":"للإسكندرية"}.</p></div>
 <div class="card"><h3>قبل ما تخرج</h3>${["افحص نشرة الأرصاد الرسمية","البس سترة نجاة","أخبر شخصاً بمكانك ووقت عودتك","راجع قوانين وأحجام الصيد المحلية"].map(t=>`<div class="row"><span>${t}</span></div>`).join("")}<p class="demo" style="margin:6px 0 0">بحر ليس بديلاً عن التحذيرات الرسمية ولا معدات السلامة.</p></div>`}
-function V1(){const t=SP[sel],d=pos?dist(pos,t):null,A=astro(new Date(),t.la,t.lo),sc=score(A);
-return `<div class="chips" style="margin:0 0 8px"><span class="chip on">نادي الإسكندرية</span><button class="chip" data-geo="1">${pos?"تحديث موقعي":"حدد موقعي"}</button></div>${map()}
-<div class="sheet"><div class="mute">منطقة الصيد المحددة</div><h3 style="font-size:22px;color:var(--ink)">${t.n}</h3>
+/* ===== الطقس الحي (Open-Meteo) والخريطة الحقيقية ===== */
+const TILE="https://tile.openstreetmap.org/{z}/{x}/{y}.png"; /* للإنتاج: استخدم مزوّد خرائط بمفتاح (MapTiler/Stadia) */
+const MARINE_OFFSET=0.1; /* نقطة الموج تُزاح شمالاً نحو البحر لأن شبكة الموج لا تغطي الشاطئ أحياناً */
+const WXC=LS("bwx2",{}),wk=(la,lo)=>la.toFixed(2)+","+lo.toFixed(2);
+const eff=l=>({w:cond.w??(l&&l.wind!=null?l.wind:null),h:cond.h??(l&&l.wave!=null?l.wave:null)});
+const fm=(x,u,d=1)=>x==null||isNaN(x)?"—":(Math.round(x*10**d)/10**d)+(u||"");
+async function fetchWx(la,lo,force){const k=wk(la,lo),c=WXC[k];if(c&&!force&&Date.now()-c.t<12e5)return c;
+try{const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),9000),J=u=>fetch(u,{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()});
+const [a,b]=await Promise.all([J(`https://api.open-meteo.com/v1/forecast?latitude=${la}&longitude=${lo}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,pressure_msl&hourly=wind_speed_10m&wind_speed_unit=kn&forecast_days=2&timezone=auto`),J(`https://marine-api.open-meteo.com/v1/marine?latitude=${la+MARINE_OFFSET}&longitude=${lo}&current=wave_height,wave_period,wave_direction,sea_surface_temperature,sea_level_height_msl&hourly=wave_height&forecast_days=2&timezone=auto`).catch(()=>({}))]);clearTimeout(tm);
+const ca=a.current||{},cb=b.current||{},H=a.hourly||{time:[]},BH=b.hourly||{time:[],wave_height:[]},i0=Math.max(0,H.time.findIndex(t=>t>=ca.time)),hours=[];
+for(let i=i0;i<Math.min(H.time.length,i0+12);i+=2){const j=BH.time.indexOf(H.time[i]);hours.push({t:H.time[i],wind:H.wind_speed_10m[i],wave:j>=0?BH.wave_height[j]:null})}
+const r={t:Date.now(),wind:ca.wind_speed_10m,gust:ca.wind_gusts_10m,dir:ca.wind_direction_10m,pres:ca.pressure_msl,air:ca.temperature_2m,wave:cb.wave_height,wper:cb.wave_period,wdir:cb.wave_direction,sst:cb.sea_surface_temperature,sea:cb.sea_level_height_msl,hours};
+WXC[k]=r;SV("bwx2",WXC);return r}catch(e){return c||null}}
+async function loadWx(force){const L=pos||{lat:31.2,lon:29.9},r=await fetchWx(L.lat,L.lon,force);if(r&&tab==0){R.keep=true;R()}else if(!r&&force)toast("تعذر جلب الطقس الآن")}
+const ATTR='<a href="https://open-meteo.com/" target="_blank" rel="noopener" style="color:var(--cy)">Weather data by Open-Meteo.com</a>';
+function seaCard(l,sc){const E=eff(l),man=cond.w!=null||cond.h!=null,old=l&&Date.now()-l.t>18e5;
+const st=(x,u,t)=>`<div><b style="font-size:20px">${x}</b><div class="mute" style="font-size:12px">${u}<br>${t}</div></div>`;
+return `<div class="card"${sc.un?' style="border-color:var(--red)"':""}><div class="flex" style="justify-content:space-between"><h3>حالة البحر الحالية</h3><button class="chip" data-wx="1">تحديث</button></div>${sc.un?'<p style="color:var(--red);font-weight:700;margin:0 0 6px">الظروف غير آمنة. لا تخرج للصيد.</p>':""}
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;margin:8px 0">${st(fm(E.w),"عقدة","الرياح"+(cond.w!=null?" (يدوي)":""))}${st(fm(l&&l.gust),"عقدة","هبات")}${st(fm(E.h),"م","الموج"+(cond.h!=null?" (يدوي)":""))}${st(fm(l&&l.wper,"",0),"ثانية","دورة الموج")}${st(fm(l&&l.sst,"°"),"م","حرارة الماء")}${st(fm(l&&l.pres,"",0),"hPa","الضغط")}</div>
+${l&&l.dir!=null?`<div class="mute">اتجاه الرياح: ${Math.round(l.dir)}° · منسوب المياه: ${fm(l.sea,"م",2)}</div>`:""}
+${l&&l.hours&&l.hours.length?`<div class="chips" style="margin:8px 0 0">${l.hours.map(h=>`<div class="chip" style="text-align:center;line-height:1.3"><div style="font-size:12px">${h.t.slice(11,13)}:00</div><b>${fm(h.wave)}م</b><div style="font-size:12px">${fm(h.wind,"",0)} عقدة</div></div>`).join("")}</div>`:""}
+<div class="flex" style="justify-content:space-around;text-align:center"><div>${ring(sc.s)}<div class="mute">الملاءمة</div></div><div>${ring(sc.c)}<div class="mute">الثقة</div></div></div>
+<div class="mute" style="margin-top:6px">${sc.ev.join(" · ")}</div>
+<p class="demo" style="margin:6px 0 0">${l?`المصدر: Open-Meteo · ${f(new Date(l.t))}${old?" (قديم)":""}. `:"الطقس الحي غير متاح الآن (أوفلاين أو خطأ)، أدخل القيم يدوياً. "}${ATTR}</p><p class="demo" style="margin:4px 0 0">ملاءمة الظروف لا تعني وجود سمك مؤكد. الموج قد يكون غير متاح قريباً من الشاطئ.</p></div>`}
+const mxp=(lo,z)=>(lo+180)/360*2**z*256,myp=(la,z)=>{const r=la*Math.PI/180;return (1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*2**z*256},lonOf=(x,z)=>x/(2**z*256)*360-180,latOf=(y,z)=>{const n=Math.PI-2*Math.PI*y/(2**z*256);return 180/Math.PI*Math.atan(.5*(Math.exp(n)-Math.exp(-n)))};
+let mv={lat:31.25,lon:29.95,z:11,moved:0};const tiles={};
+function drawMap(){const el=$("#mp2");if(!el)return;const W=el.clientWidth,H=el.clientHeight,z=mv.z,n=2**z,x0=mxp(mv.lon,z)-W/2,y0=myp(mv.lat,z)-H/2,need=new Set(),lay=el.querySelector(".lay");
+for(let tx=Math.floor(x0/256);tx<=Math.floor((x0+W)/256);tx++)for(let ty=Math.floor(y0/256);ty<=Math.floor((y0+H)/256);ty++){if(ty<0||ty>=n)continue;const k=z+"/"+tx+"/"+ty;need.add(k);let im=tiles[k];if(!im){im=new Image();im.className="tl";im.alt="";im.draggable=false;im.src=TILE.replace("{z}",z).replace("{x}",((tx%n)+n)%n).replace("{y}",ty);lay.appendChild(im);tiles[k]=im}im.style.transform="translate("+Math.round(tx*256-x0)+"px,"+Math.round(ty*256-y0)+"px)"}
+Object.keys(tiles).forEach(k=>{if(!need.has(k)){tiles[k].remove();delete tiles[k]}});
+drawOv(el,z,n,x0,y0);
+el.querySelector(".mk").innerHTML=SP.map((t,i)=>`<button class="pin ${i==sel?"on":""}" data-sp="${i}" aria-label="${t.n}" style="left:${mxp(t.lo,z)-x0}px;top:${myp(t.la,z)-y0}px">🎣</button>`).join("")+(pos?`<i class="me" style="left:${mxp(pos.lon,z)-x0}px;top:${myp(pos.lat,z)-y0}px"></i>`:"")}
+/* طبقات الأقمار الصناعية من NASA GIBS (بلاطات XYZ عامة). الأسماء قابلة للتعديل هنا */
+const LAYERS={sst:{n:"حرارة سطح البحر",id:"GHRSST_L4_MUR_Sea_Surface_Temperature",L:7,lag:2},chl:{n:"الكلوروفيل",id:"MODIS_Aqua_L2_Chlorophyll_A",L:7,lag:1}};
+let ov=LS("bov",null);if(ov&&!LAYERS[ov])ov=null;let dayOff=0,okN=0,errN=0,ovMsg="";const tiles2={},probed=new Set();
+const ovDate=()=>new Date(Date.now()-(LAYERS[ov].lag+dayOff)*864e5).toISOString().slice(0,10);
+const ovChips=()=>[["none","بدون طبقة"],["sst","حرارة السطح"],["chl","الكلوروفيل"]].map(c=>`<button class="chip ${(ov||"none")==c[0]?"on":""}" data-ov="${c[0]}">${c[1]}</button>`).join("");
+const ovNote=()=>ov?`${LAYERS[ov].n} · NASA GIBS · ${ovDate()} · ${ovMsg||"الغيوم والفجوات قد تُخفي أجزاء من الطبقة"} · <a href="https://worldview.earthdata.nasa.gov/" target="_blank" rel="noopener" style="color:var(--cy)">مفتاح الألوان</a>`:"";
+const setNote=()=>{const n=$("#ovn");if(n)n.innerHTML=ovNote()};
+function clearOv(){Object.keys(tiles2).forEach(k=>{tiles2[k].remove();delete tiles2[k]});probed.clear();okN=errN=0;ovMsg=""}
+function drawOv(el,z,n,x0,y0){const lay=el.querySelector(".lay2");if(!lay)return;if(!ov){clearOv();return}
+const Y=LAYERS[ov],L=Math.min(z,Y.L),d=z-L,need=new Set(),W=el.clientWidth,H=el.clientHeight;
+if(d>5){clearOv();ovMsg="قرّب أقل لعرض الطبقة";setNote();return}
+if(ovMsg=="قرّب أقل لعرض الطبقة"){ovMsg="";setNote()}
+for(let tx=Math.floor(x0/256);tx<=Math.floor((x0+W)/256);tx++)for(let ty=Math.floor(y0/256);ty<=Math.floor((y0+H)/256);ty++){if(ty<0||ty>=n)continue;
+const wx=((tx%n)+n)%n,px=wx>>d,py=ty>>d,url=`https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/${Y.id}/default/${ovDate()}/GoogleMapsCompatible_Level${Y.L}/${L}/${py}/${px}.png`,k=ov+dayOff+"/"+z+"/"+tx+"/"+ty;need.add(k);let t=tiles2[k];
+if(!t){t=document.createElement("div");t.className="ot";t.style.backgroundImage=`url(${url})`;t.style.backgroundSize=(256<<d)+"px";t.style.backgroundPosition=`-${(wx-(px<<d))*256}px -${(ty-(py<<d))*256}px`;lay.appendChild(t);tiles2[k]=t;
+if(!probed.has(url)){probed.add(url);const im=new Image();im.onload=()=>{okN++};im.onerror=()=>{errN++;if(okN==0&&errN>=Math.min(3,probed.size)){if(dayOff<3){dayOff++;clearOv();setNote();drawMap()}else{ovMsg="الطبقة غير متاحة الآن";setNote()}}};im.src=url}}
+t.style.transform="translate("+Math.round(tx*256-x0)+"px,"+Math.round(ty*256-y0)+"px)"}
+Object.keys(tiles2).forEach(k=>{if(!need.has(k)){tiles2[k].remove();delete tiles2[k]}})}
+const zoomMap=d=>{mv.z=Math.max(4,Math.min(16,mv.z+d));drawMap()};
+function initMap(){const el=$("#mp2");if(!el)return;Object.keys(tiles).forEach(k=>delete tiles[k]);clearOv();const ptr=new Map();let ld=0;const pd=()=>{const a=[...ptr.values()];return Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)};
+let cap=false;el.onpointerdown=e=>{if(e.target.closest(".zc"))return;ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});mv.moved=0;cap=false;if(ptr.size==2)ld=pd()};
+el.onpointermove=e=>{const q=ptr.get(e.pointerId);if(!q)return;const dx=e.clientX-q.x,dy=e.clientY-q.y;q.x=e.clientX;q.y=e.clientY;
+if(ptr.size==1){mv.moved+=Math.abs(dx)+Math.abs(dy);if(!cap&&mv.moved>6){try{el.setPointerCapture(e.pointerId)}catch(_){}cap=true}mv.lon=lonOf(mxp(mv.lon,mv.z)-dx,mv.z);mv.lat=Math.max(-85,Math.min(85,latOf(myp(mv.lat,mv.z)-dy,mv.z)));drawMap()}
+else if(ptr.size==2){const d=pd();if(ld&&d/ld>1.6){zoomMap(1);ld=d}else if(ld&&d/ld<.62){zoomMap(-1);ld=d}}};
+el.onpointerup=el.onpointercancel=e=>{ptr.delete(e.pointerId)};el.onwheel=e=>{e.preventDefault();zoomMap(e.deltaY<0?1:-1)};drawMap();updateSheet()}
+function sheet(){const t=SP[sel],d=pos?dist(pos,t):null,A=astro(new Date(),t.la,t.lo),l=WXC[wk(t.la,t.lo)],sc=score(A,l),E=eff(l);
+return `<div class="mute">منطقة الصيد المحددة</div><h3 style="font-size:22px;color:var(--ink)">${t.n}</h3>
 <div class="chips" style="margin:8px 0 0"><span class="chip">${t.f.join("، ")}</span>${d?`<span class="chip">${d.km} كم · اتجاه ${d.b}°</span>`:""}</div><div class="mute">${gmsg}</div>
+<div class="row"><span>الرياح</span><b>${fm(E.w)} عقدة${l&&l.gust!=null?" · هبات "+fm(l.gust,"",0):""}</b></div><div class="row"><span>الموج</span><b>${fm(E.h)} م${l&&l.wper!=null?" · "+fm(l.wper,"",0)+" ث":""}</b></div><div class="row"><span>حرارة الماء · الضغط</span><b>${fm(l&&l.sst,"°")} · ${fm(l&&l.pres,"",0)} hPa</b></div>
+<p class="demo" style="margin:4px 0 0">${l?`المصدر: Open-Meteo · ${f(new Date(l.t))}. `:"جارٍ تحميل الطقس أو غير متاح. "}${ATTR}</p>
 <button class="btn" id="dt" style="margin-top:8px">${det?"إخفاء":"عرض"} تفاصيل المنطقة</button>
-${det?`<div style="margin-top:12px"><div class="flex"><div style="text-align:center">${ring(sc.s)}<div class="mute">الملاءمة</div></div><div style="text-align:center">${ring(sc.c)}<div class="mute">الثقة</div></div></div><p class="mute">${sc.ev.join(" · ")}</p><div class="row"><span>الطعم الشائع</span><b>${t.b}</b></div>${window.claude&&window.claude.use?`<button class="btn c" id="ai" style="margin-top:8px">اسأل مساعد بحر</button><div id="ao" class="mute" style="white-space:pre-wrap;margin-top:8px"></div>`:""}</div>`:""}</div>
-<p class="demo">الخريطة رسم توضيحي والإحداثيات تقريبية.</p>`}
+${det?`<div style="margin-top:12px"><div class="flex"><div style="text-align:center">${ring(sc.s)}<div class="mute">الملاءمة</div></div><div style="text-align:center">${ring(sc.c)}<div class="mute">الثقة</div></div></div><p class="mute">${sc.ev.join(" · ")}</p><div class="row"><span>الطعم الشائع</span><b>${t.b}</b></div>${window.claude&&window.claude.use?`<button class="btn c" id="ai" style="margin-top:8px">اسأل مساعد بحر</button><div id="ao" class="mute" style="white-space:pre-wrap;margin-top:8px"></div>`:""}</div>`:""}`}
+function updateSheet(){const el=$("#sheet");if(el)el.innerHTML=sheet();const k=sel,t=SP[sel];fetchWx(t.la,t.lo).then(r=>{if(r&&k==sel&&$("#sheet"))$("#sheet").innerHTML=sheet()})}
+function V1(){return `<div class="chips" style="margin:0 0 8px"><span class="chip on">نادي الإسكندرية</span><button class="chip" data-geo="1">${pos?"تحديث موقعي":"حدد موقعي"}</button></div>
+<div id="mp2" class="mp2" role="application" aria-label="خريطة مناطق الصيد"><div class="lay"></div><div class="lay2"></div><div class="mk"></div><div class="zc"><button class="ib" data-z="1" aria-label="تكبير">+</button><button class="ib" data-z="-1" aria-label="تصغير">−</button></div><span class="att">© OpenStreetMap</span></div>
+<div class="chips" id="ovc" style="margin:8px 0 0">${ovChips()}</div><div class="demo" id="ovn" style="margin:0 0 8px">${ovNote()}</div><div id="sheet" class="sheet">${sheet()}</div><p class="demo">الخريطة من OpenStreetMap. إحداثيات نقاط الصيد تقريبية.</p>`}
 function V2(){let h=tabs(["الأسماك","الطعوم والعدة","العُقد"],sub);
 if(sub==0){h+=tabs(["البحر المتوسط","المياه العذبة","البحر الأحمر"],{m:0,f:1,r:2}[fl]).replace(/data-s=/g,"data-fl=");
 h+=FI.filter(f=>f[3]==fl).map(f=>`<div class="card flex">${im(f[0])}<div><h3 style="margin:0">${f[0]}</h3><div>${f[1]}</div><i style="color:var(--cy)">${f[2]}</i></div></div>`).join("")}
@@ -155,7 +234,7 @@ function V4(){const sp=new Set(log.map(l=>l.f)).size,rl=log.filter(l=>l.r).lengt
 let h=tabs(["هويتي","رحلاتي","الإعدادات"],sub);
 if(sub==0)h+=`<div class="card"><div class="flex"><img class="bd" style="width:76px;height:76px" alt="" src="${IMG.b0}"><div><h3 style="font-size:24px">صياد بحر</h3><div class="mute">عضو منذ ${since} · الإسكندرية</div></div></div><div class="g2" style="margin-top:10px"><div class="card"><span class="mute">الرحلات</span><div class="big">${log.length}</div></div><div class="card"><span class="mute">النقاط</span><div class="big">${pts()}</div></div></div></div><div class="card"><h3>مجموعة الأسماك</h3>${coll()}</div><div class="card"><h3>الإنجازات</h3>${A.map(a=>`<div class="row"><span class="flex" style="gap:10px"><img class="bd" alt="" src="${IMG[a[4]]}"><span>${a[0]}<div class="mute">${a[1]} / ${a[2]} ${a[3]}</div></span></span><div class="bar"><b style="width:${Math.min(100,a[1]/a[2]*100)}%"></b></div></div>`).join("")}</div>`;
 if(sub==1)h+=log.length?log.slice().reverse().map(l=>`<div class="card">${l.ph?`<img class="hero" style="margin:0 0 8px" alt="" src="${l.ph}">`:""}<h3>${l.f} · ${l.w} كجم</h3><div class="mute">${l.p} · ${l.d}${l.r?" · أُطلقت":""}${l.pos?" · "+l.pos.lat+", "+l.pos.lon:""}</div></div>`).join(""):`<div class="card mute">لسه مفيش رحلات. سجّل أول صيدة من النادي.</div>`;
-if(sub==2){h+=`<div class="card"><h3>الخرائط بدون إنترنت</h3>`+["الإسكندرية","البحر الأحمر – الغردقة","النيل – القاهرة"].map((n,i)=>`<div class="row"><span>${n}<div class="mute">${[120,185,60][i]} ميجا</div></span><button class="chip" data-dl="${i}">قريباً</button></div>`).join("")+`<p class="demo" style="margin:6px 0 0">تنزيل الخرائط متاح في نسخة التطبيق الكاملة.</p></div><div class="card"><h3>الإعدادات</h3>`+[["n","الإشعارات والتنبيهات"],["o","تحديث الخرائط تلقائياً"]].map(t=>`<div class="row"><span>${t[1]}</span><button class="tgl ${set[t[0]]?"on":""}" data-tg="${t[0]}" aria-label="${t[1]}"></button></div>`).join("")+`<div class="row"><span>اللغة</span><b>العربية</b></div><div class="row"><span>الوحدات</span><b>متري</b></div></div>`}return h}
+if(sub==2){h+=`<div class="card"><h3>الخرائط بدون إنترنت</h3>`+["الإسكندرية","البحر الأحمر – الغردقة","النيل – القاهرة"].map((n,i)=>`<div class="row"><span>${n}<div class="mute">${[120,185,60][i]} ميجا</div></span><button class="chip" data-dl="${i}">قريباً</button></div>`).join("")+`<p class="demo" style="margin:6px 0 0">تنزيل الخرائط متاح في نسخة التطبيق الكاملة.</p></div><div class="card"><h3>الإعدادات</h3>`+[["n","الإشعارات والتنبيهات"],["o","تحديث الخرائط تلقائياً"]].map(t=>`<div class="row"><span>${t[1]}</span><button class="tgl ${set[t[0]]?"on":""}" data-tg="${t[0]}" aria-label="${t[1]}"></button></div>`).join("")+`<div class="row"><span>اللغة</span><b>العربية</b></div><div class="row"><span>الوحدات</span><b>متري</b></div><div class="row"><span>سياسة الخصوصية</span><a href="privacy.html" style="color:var(--cy)">عرض</a></div></div>`}return h}
 
 const PR=[{id:"p1",c:"b",n:"جمبري طازج للطُعم",k:"shrimp",p:250,u:"كجم",sp:1},{id:"p2",c:"b",n:"حبار طازج",k:"squid",p:180,u:"كجم"},{id:"p3",c:"b",n:"سردين طبيعي",k:"sardines",p:90,u:"كجم"},{id:"p4",c:"b",n:"طعم سلكون 8 سم (5 قطع)",k:"lure",p:85,u:"عبوة",sp:1},{id:"p5",c:"b",n:"طعم مينو صلب",k:"minnow",p:120,u:"قطعة"},{id:"p6",c:"g",n:"قصبة سبينج 3 م",k:"rod",p:950,u:"قطعة"},{id:"p7",c:"g",n:"بكرة سبينج 3000",k:"reel",p:1450,u:"قطعة",sp:1},{id:"p8",c:"g",n:"مجموعة شصوص وسنكر",k:"hooks",p:160,u:"علبة"}];
 let cart=LS("bcart",{});const cn=()=>Object.values(cart).reduce((a,b)=>a+b,0),tot=()=>PR.reduce((a,q)=>a+(cart[q.id]||0)*q.p,0);
@@ -165,21 +244,31 @@ function toast(m){const d=document.createElement("div");d.className="toast";d.te
 function VS(){let h=`<div class="card sponsor"><span class="ad">إعلان</span><div class="mute">مساحة الراعي</div><h3 style="font-size:20px;color:var(--gold)">برعاية [اسم الراعي]</h3><div class="mute">هنا بانر الراعي وعرضه الحالي.</div></div>`+tabs(["الطعوم","أدوات الصيد","سلتي ("+cn()+")"],sub);
 if(sub<2)return h+`<div class="g2">${PR.filter(q=>q.c==(sub?"g":"b")).map(pc).join("")}</div><div class="card"><h3>للتجار</h3><div class="mute">عرض منتجك داخل بحر يحتاج لوحة تاجر وربط دفع إلكتروني، وهو يتفعّل في النسخة الكاملة. المنتجات المحظورة: أي وسيلة صيد مخالفة للقانون.</div></div><p class="demo">المنتجات والأسعار تجريبية للتوضيح.</p>`;
 const it=PR.filter(q=>cart[q.id]);return h+(it.length?it.map(q=>`<div class="card flex"><img class="th" style="width:64px;height:48px;margin:0" src="${IMG[q.k]}" alt=""><div style="flex:1"><b>${q.n}</b><div class="mute">${q.p} ج × ${cart[q.id]}</div></div><button class="chip" data-dec="${q.id}">−</button><b>${cart[q.id]}</b><button class="chip" data-inc="${q.id}">+</button></div>`).join("")+`<div class="card"><div class="row"><span>الإجمالي</span><b>${tot()} ج</b></div><input id="cn" placeholder="الاسم"><input id="cp" placeholder="رقم الموبايل" inputmode="tel"><input id="ca" placeholder="العنوان"><a class="btn" id="wa" href="${waLink()}" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none">أرسل الطلب عبر واتساب</a><p class="demo" style="margin:8px 0 0">الدفع الإلكتروني داخل التطبيق يتفعّل في النسخة الكاملة. التاجر مسؤول عن المنتج وسياسة الاسترجاع.</p></div>`:`<div class="card mute">السلة فاضية.</div>`)}
-function R(){document.querySelectorAll("nav button").forEach((b,i)=>b.classList.toggle("on",i==tab));const v=$("#v");v.innerHTML=[V0,V1,V2,V3,VS,V4][tab]();if(R.keep){R.keep=false}else scrollTo(0,0);if(R.fresh){R.fresh=false;v.classList.remove("an");void v.offsetWidth;v.classList.add("an")}}
+const CFG={ga:"",cf:""}; /* ضع هنا: ga = معرّف GA4 مثل G-XXXXXXX ، cf = رمز Cloudflare Web Analytics */
+const track=(n,q)=>{try{if(window.gtag&&LS("consent",null)==="y")gtag("event",n,q||{})}catch(e){}};
+function loadAnalytics(){if(CFG.cf&&!document.getElementById("cfb")){const e=document.createElement("script");e.id="cfb";e.defer=true;e.src="https://static.cloudflareinsights.com/beacon.min.js";e.setAttribute("data-cf-beacon",JSON.stringify({token:CFG.cf}));document.head.appendChild(e)}
+if(CFG.ga&&LS("consent",null)==="y"&&!window.gtag){window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};const e=document.createElement("script");e.async=true;e.src="https://www.googletagmanager.com/gtag/js?id="+CFG.ga;document.head.appendChild(e);gtag("js",new Date());gtag("config",CFG.ga,{anonymize_ip:true})}}
+function consentBar(){if(!CFG.ga||LS("consent",null)!==null)return;const d=document.createElement("div");d.className="cb";d.innerHTML='<div>نستخدم إحصائيات استخدام مجهولة لتحسين التطبيق. <a href="privacy.html" style="color:var(--cy)">سياسة الخصوصية</a></div><div class="flex" style="margin-top:8px"><button class="chip on" id="cy">موافق</button><button class="chip" id="cx">لا، شكراً</button></div>';document.body.appendChild(d);d.querySelector("#cy").onclick=()=>{SV("consent","y");d.remove();loadAnalytics();track("screen_view",{screen_name:"home"})};d.querySelector("#cx").onclick=()=>{SV("consent","n");d.remove()}}
+function R(){document.querySelectorAll("nav button").forEach((b,i)=>b.classList.toggle("on",i==tab));const v=$("#v");v.innerHTML=[V0,V1,V2,V3,VS,V4][tab]();if(tab==1)initMap();if(R.keep){R.keep=false}else scrollTo(0,0);if(R.fresh){R.fresh=false;v.classList.remove("an");void v.offsetWidth;v.classList.add("an");track("screen_view",{screen_name:["home","map","guide","club","store","profile"][tab]});if(tab==4)track("store_view",{sponsor_slot:1})}}
 $("#v").onclick=e=>{const t=e.target,g=s=>t.closest(s);let x;
-if(x=g("[data-add]")){cart[x.dataset.add]=(cart[x.dataset.add]||0)+1;SV("bcart",cart);toast("أُضيف للسلة");const c=document.querySelector('[data-s="2"]');if(c)c.textContent="سلتي ("+cn()+")";return}
+if(g("[data-soon]"))return toast("قريباً في النسخة الكاملة");
+if(g("[data-ai]")){if(window.claude&&window.claude.use){tab=1;det=true;R.fresh=true;return R()}return toast("المساعد متاح داخل Claude أو في النسخة الكاملة")}
+if(x=g("[data-add]")){cart[x.dataset.add]=(cart[x.dataset.add]||0)+1;SV("bcart",cart);track("add_to_cart",{item_id:x.dataset.add,sponsored:(PR.find(q=>q.id==x.dataset.add)||{}).sp?1:0});toast("أُضيف للسلة");const c=document.querySelector('[data-s="2"]');if(c)c.textContent="سلتي ("+cn()+")";return}
 if(x=g("[data-inc]")){cart[x.dataset.inc]++;SV("bcart",cart);R.keep=true;return R()}
 if(x=g("[data-dec]")){const k=x.dataset.dec;if(--cart[k]<=0)delete cart[k];SV("bcart",cart);R.keep=true;return R()}
-if(x=g("#wa")){x.href=waLink();return}
+if(x=g("#wa")){x.href=waLink();track("order_whatsapp",{value:tot(),items:cn()});return}
 if(x=g("[data-go]"))return(tab=+x.dataset.go,R.fresh=true,R());
-if(x=g("[data-sp]")){sel=+x.dataset.sp;return R()}
-if(g("#dt")){det=!det;return R()}
+if(x=g("[data-ov]")){ov=x.dataset.ov==="none"?null:x.dataset.ov;SV("bov",ov);dayOff=0;clearOv();$("#ovc").innerHTML=ovChips();setNote();return drawMap()}
+if(x=g("[data-z]"))return zoomMap(+x.dataset.z);
+if(x=g("[data-sp]")){if(mv.moved>8)return;sel=+x.dataset.sp;track("spot_select",{spot:SP[sel].n});if($("#sheet")){updateSheet();return drawMap()}return R()}
+if(g("[data-wx]")){loadWx(true);return}
+if(g("#dt")){det=!det;return $("#sheet")?updateSheet():R()}
 if(x=g("[data-fl]")){fl=["m","f","r"][+x.dataset.fl];return R()}
 if(x=g("[data-s]")){sub=+x.dataset.s;return R()}
 if(x=g("[data-tg]")){set[x.dataset.tg]=!set[x.dataset.tg];SV("bs2",set);return R()}
 if(x=g("[data-dl]")){dl[x.dataset.dl]=true;SV("bd",dl);return R()}
 if(g("#cs")){const a=parseFloat($("#cw").value),b=parseFloat($("#ch").value);cond={w:isNaN(a)?null:a,h:isNaN(b)?null:b};SV("bc",cond);return R()}
-if(g("[data-geo]")){gmsg="جارٍ تحديد موقعك...";R();return navigator.geolocation?navigator.geolocation.getCurrentPosition(q=>{pos={lat:q.coords.latitude,lon:q.coords.longitude};SV("bp",pos);gmsg="";R()},()=>{gmsg="تعذر تحديد الموقع. فعّل إذن الموقع للمتصفح.";R()},{enableHighAccuracy:true,timeout:15000}):(gmsg="الجهاز لا يدعم تحديد الموقع.",R())}
+if(g("[data-geo]")){track("geo_request");gmsg="جارٍ تحديد موقعك...";R();return navigator.geolocation?navigator.geolocation.getCurrentPosition(q=>{pos={lat:q.coords.latitude,lon:q.coords.longitude};SV("bp",pos);mv.lat=pos.lat;mv.lon=pos.lon;gmsg="";R();loadWx()},()=>{gmsg="تعذر تحديد الموقع. فعّل إذن الموقع للمتصفح.";R()},{enableHighAccuracy:true,timeout:15000}):(gmsg="الجهاز لا يدعم تحديد الموقع.",R())}
 if(g("#ai"))return ask();
 if(g("#lg"))return saveCatch();};
 if(!LS("seen",0)){const d=document.createElement("div");d.id="sp";d.innerHTML=`<img class="ic" src="${IMG.icon}" alt=""><h2>اكتشف البحر بذكاء</h2><p>كل ما تحتاجه لرحلتك، من اختيار المكان إلى تسجيل مصيدك.</p><button class="btn" id="go">ابدأ رحلتك</button>`;d.style.backgroundImage=`linear-gradient(#061B2900 30%,#061B29 88%),url(${IMG.boat})`;document.body.appendChild(d);d.querySelector("#go").onclick=()=>{SV("seen",1);d.remove()}}
@@ -188,5 +277,7 @@ $("#inst").onclick=async()=>{if(!dip)return;dip.prompt();await dip.userChoice;di
 if("serviceWorker"in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 $("#v").addEventListener("keydown",e=>{if((e.key=="Enter"||e.key==" ")&&e.target.matches("[data-sp]")){e.preventDefault();e.target.dispatchEvent(new MouseEvent("click",{bubbles:true}))}});
 if(!navigator.onLine){off=true;document.body.classList.add("off");$("#net span").textContent="أوفلاين"}
+loadAnalytics();
 R.fresh=true;R();
+consentBar();loadWx();
 </script></body></html>
