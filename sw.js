@@ -1,4 +1,4 @@
-const V="bahr-v7",CORE=["./","index.html","privacy.html","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/icon-512-maskable.png","icons/apple-touch-icon.png","icons/favicon-48.png"];
+const V="bahr-v8",CORE=["./","index.html","privacy.html","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/icon-512-maskable.png","icons/apple-touch-icon.png","icons/favicon-48.png"];
 const FONT=/^https:\/\/fonts\.(googleapis|gstatic)\.com\//,TILE=/^https:\/\/(tile\.openstreetmap\.org|gibs\.earthdata\.nasa\.gov)\//;
 async function trim(c){const k=await c.keys(),t=k.filter(r=>TILE.test(r.url));if(t.length>500)await Promise.all(t.slice(0,t.length-500).map(r=>c.delete(r)))}
 self.addEventListener("install",e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
